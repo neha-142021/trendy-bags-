@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Trendy Bags | Home</title>
+    <!-- Load Tailwind CSS for modern styling --><script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .page-view { display: none; } /* Used for SPA routing */
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
+    
+    <!-- 
+        *** GTM ASSESSMENT TASK 1: GTM CONTAINER CODE SNIPPET 1 GOES HERE (IN THE <head>) ***
+    --></head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col antialiased">
+
+    <!-- Header & Navigation --><header class="bg-blue-800 text-white shadow-lg sticky top-0 z-20">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-3xl font-bold tracking-tight cursor-pointer hover:text-blue-200 transition" onclick="goToPage('home')">TrendyBags.in</h1>
+            <nav class="space-x-4 flex items-center">
+                <div class="relative">
+                    <button class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-2 px-4 rounded-lg transition duration-150 shadow-md flex items-center" onclick="goToPage('cart')">
+                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.2 4.4M15 13H7"></path></svg>
+                        Cart
+                        <span id="cart-counter" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">0</span>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        
+        <!-- ============================================== --><!-- VIEW 1: HOME/BROWSE PAGE --><!-- ============================================== --><div id="home-view" class="page-view" style="display: block;">
+            <h2 class="text-4xl font-extrabold text-gray-900 mb-8">Discover Our Collection</h2>
+            <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Products will be dynamically loaded here by JavaScript --></div>
+        </div>
+
+        <!-- ============================================== --><!-- VIEW 2: PRODUCT DETAIL PAGE --><!-- ============================================== --><div id="product-view" class="page-view">
+            <button onclick="goToPage('home')" class="text-blue-600 hover:text-blue-800 mb-6 font-medium text-lg flex items-center">
+                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Back to Shopping
+            </button>
+            <div id="product-detail-content" class="bg-white shadow-xl rounded-xl overflow-hidden lg:flex p-6 lg:p-10">
+                <!-- Dynamic Product Details go here --></div>
+        </div>
+
+        <!-- ============================================== --><!-- VIEW 3: CART PAGE --><!-- ============================================== --><div id="cart-view" class="page-view">
+            <h2 class="text-4xl font-extrabold text-gray-900 mb-8">Your Shopping Cart</h2>
+            <div class="lg:flex lg:space-x-8">
+                <div id="cart-items" class="lg:w-2/3 space-y-4">
+                    <!-- Cart items rendered here --></div>
+                <div class="lg:w-1/3 mt-8 lg:mt-0 bg-white p-6 shadow-lg rounded-xl h-fit">
+                    <h3 class="text-2xl font-semibold mb-5">Order Summary</h3>
+                    <div class="space-y-3 text-gray-700">
+                        <p class="flex justify-between text-lg"><span>Subtotal:</span> <span id="cart-subtotal" class="font-medium">₹0.00</span></p>
+                        <p class="flex justify-between text-lg border-t border-gray-200 pt-3"><span>Shipping:</span> <span class="font-medium text-green-600">FREE</span></p>
+                        <p class="flex justify-between text-3xl font-bold text-blue-800 border-t-2 border-gray-300 pt-4 mt-4"><span>Total:</span> <span id="cart-total">₹0.00</span></p>
+                    </div>
+                    <button id="checkout-btn" onclick="checkout()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg mt-8 shadow-lg transition duration-150 text-xl disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        Proceed to Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== --><!-- VIEW 4: ORDER CONFIRMED PAGE (Conversion) --><!-- ============================================== --><div id="confirm-view" class="page-view text-center py-20 bg-white shadow-xl rounded-xl">
+            <svg class="w-24 h-24 text-green-500 mx-auto mb-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h2 class="text-5xl font-extrabold text-green-600 mb-4">Order Successful!</h2>
+            <p class="text-2xl text-gray-700 mb-10">Thank you for shopping with TrendyBags. Your order is confirmed.</p>
+            
+            <div class="border border-green-300 p-8 inline-block rounded-xl text-left bg-green-50 shadow-inner">
+                <p class="text-xl mb-2"><strong>Order ID:</strong> <span id="display-txn-id" class="font-semibold text-gray-900">N/A</span></p>
+                <p class="text-xl"><strong>Total Paid:</strong> <span id="display-total-value" class="font-semibold text-gray-900">N/A</span></p>
+            </div>
+
+            <button onclick="goToPage('home')" class="mt-12 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg transition duration-150 text-xl shadow-lg">
+                Continue Shopping
+            </button>
+        </div>
+
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 p-8 mt-16 text-sm">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2025 TrendyBags Demo. For GTM Assessment use only. All product images are placeholders from Unsplash It.</p>
+            <p class="mt-2">Developed for educational purposes.</p>
+        </div>
+    </footer>
+    
+    <!-- 
+        *** GTM ASSESSMENT TASK 1: GTM CONTAINER CODE SNIPPET 2 GOES HERE (BEFORE </body>) ***
+    --><script>
+        // ==========================================================
+        // JS Data and State Management
+        // ==========================================================
+        const products = [
+            { id: 'TB001', name: 'Elite Explorer Backpack', price: 2999, category: 'Adventure', description: 'A rugged and spacious backpack designed for the adventurous spirit. Features multiple compartments, water-resistant material, and ergonomic support for long journeys. Ideal for tracking expeditions and heavy-duty use.', image: 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcSpfuYvpYf5gfAoXg4swQmvgN7Qef-9TWoWsTIMV27xjZYCyPIzCY3X357wNMiiPEM-GtXryl7zOaLx37NXQU1EwzZYgbYKCg5ANRvub9c' }, // Backpack
+            { id: 'TB002', name: 'Urban Messenger Sling', price: 1499, category: 'Urban', description: 'Stylish and functional, this messenger sling is perfect for the modern urbanite. It offers quick access pockets, a padded tablet sleeve, and a sleek design that complements any outfit. Great for daily commutes and casual outings.', image: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSmWjcRKfEx12GymQEyOJ-Muk2jOMvBoqecfABTKFrjd7MBCvz1PMj4Lf6aVrb82eLe4-wUtCS_tY8HLJKQG0UyZy7FdkyH3hA4uGGsPpZPamLM7yIxyKQ9' }, // Sling
+            { id: 'TB003', name: 'Professional Executive Briefcase', price: 4500, category: 'Business', description: 'Elevate your professional image with this premium leather briefcase. Designed for executives, it features a padded laptop compartment, organized interior for documents, and a comfortable handle. Perfect for important meetings and business travel.', image: 'https://indiagiftcart.com/wp-content/uploads/2024/06/25-5-jiloz-prime-34-5-cross-14-7-5-original-imagsyyzg7uh6hwt.webp' } // Briefcase
+        ];
+        
+        let cart = [];
+        let currentProduct = null;
+        const currencySymbol = '₹';
+
+        // ==========================================================
+        // GTM Data Layer Functions
+        // ==========================================================
+        window.dataLayer = window.dataLayer || [];
+
+        function pushDataLayerEvent(event, data = {}) {
+            console.log(`%c[DL Push] Event: ${event}`, 'color: #1a73e8; font-weight: bold;', data); // Log to console with style
+            window.dataLayer.push({
+                ...data,
+                'event': event,
+            });
+        }
+
+        // ==========================================================
+        // View Rendering Functions
+        // ==========================================================
+        
+        function updateCartCounter() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-counter').innerText = totalItems;
+        }
+
+        function renderHome() {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = products.map(p => `
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition duration-300 p-6 flex flex-col items-center text-center">
+                    <img src="${p.image}" alt="${p.name}" class="w-full h-48 object-cover rounded-lg mb-4 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-900 mb-1">${p.name}</h3>
+                    <p class="text-sm text-gray-500 mb-3">${p.category} Collection</p>
+                    <p class="text-3xl font-extrabold text-red-600 my-3">${currencySymbol}${p.price.toLocaleString('en-IN')}</p>
+                    <button onclick="goToProductDetail('${p.id}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition duration-150 shadow-md">
+                        View Details
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderProduct(productId) {
+            currentProduct = products.find(p => p.id === productId);
+            if (!currentProduct) {
+                alert('Product not found!');
+                goToPage('home');
+                return;
+            }
+
+            const detailContent = document.getElementById('product-detail-content');
+            detailContent.innerHTML = `
+                <div class="lg:w-1/2 p-4 flex justify-center items-center">
+                    <img src="${currentProduct.image.replace('600/400', '800/600')}" alt="${currentProduct.name}" class="max-w-full h-auto object-cover rounded-xl shadow-xl">
+                </div>
+                <div class="lg:w-1/2 p-4 lg:pl-10">
+                    <span class="text-sm text-gray-500 uppercase tracking-wider font-semibold">${currentProduct.category}</span>
+                    <h2 class="text-4xl lg:text-5xl font-extrabold text-gray-900 mt-2 mb-4 leading-tight">${currentProduct.name}</h2>
+                    
+                    <!-- KEY SPOT FOR TASK 3/4 (Click Tracking) --><p class="text-4xl lg:text-5xl font-extrabold text-red-600 mb-6">${currencySymbol}${currentProduct.price.toLocaleString('en-IN')}</p>
+                    <p class="text-lg text-gray-700 mb-8 leading-relaxed">${currentProduct.description}</p>
+                    
+                    <!-- Button ID for Click Event Tracking (Task 3) --><!-- The button text will be tracked as a variable (Task 4) --><button 
+                        id="add-to-cart-btn" 
+                        data-product-id="${currentProduct.id}" 
+                        onclick="addToCart('${currentProduct.id}', this)"
+                        class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-lg shadow-xl transition duration-150 text-xl uppercase tracking-wide flex items-center justify-center space-x-2"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Add To Cart (${currencySymbol}${currentProduct.price.toLocaleString('en-IN')})</span>
+                    </button>
+
+                    <p class="text-sm text-gray-500 mt-4 text-center">Free delivery & COD available on eligible orders.</p>
+                </div>
+            `;
+            
+            // TASK 7 SETUP: Push a Data Layer event specifically for this product page
+            pushDataLayerEvent('product_page_view', {
+                'pageCategory': currentProduct.category, // This is the custom value for Task 7
+                'productID': currentProduct.id,
+                'screen_name': `Product Detail Page: ${currentProduct.name}`
+            });
+        }
+        
+        function renderCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const subtotalEl = document.getElementById('cart-subtotal');
+            const totalEl = document.getElementById('cart-total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-6 rounded-lg shadow-sm">
+                        <p class="font-bold text-xl mb-2">Your cart is empty.</p>
+                        <p class="text-lg">Looks like you haven't added anything yet. Time to find some amazing bags!</p>
+                        <button onclick="goToPage('home')" class="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-150">
+                            Browse Products
+                        </button>
+                    </div>
+                `;
+                subtotalEl.innerText = `${currencySymbol}0.00`;
+                totalEl.innerText = `${currencySymbol}0.00`;
+                checkoutBtn.disabled = true;
+                return;
+            }
+
+            const totalValue = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+            cartItemsContainer.innerHTML = cart.map(item => `
+                <div class="flex items-center bg-white p-5 shadow-md rounded-lg transform hover:scale-[1.01] transition duration-200 ease-in-out">
+                    <img src="${item.image.replace('600/400', '100/100')}" class="w-24 h-24 object-cover rounded-md mr-5 border border-gray-200">
+                    <div class="flex-grow">
+                        <p class="font-semibold text-xl">${item.name}</p>
+                        <p class="text-gray-600 mt-1">Qty: ${item.quantity} | Unit Price: ${currencySymbol}${item.price.toLocaleString('en-IN')}</p>
+                        <p class="font-bold text-blue-700 text-lg mt-1">Total: ${currencySymbol}${(item.price * item.quantity).toLocaleString('en-IN')}</p>
+                    </div>
+                    <button onclick="removeFromCart('${item.id}')" class="text-red-500 hover:text-red-700 font-semibold text-lg py-2 px-3 rounded transition duration-150">
+                        Remove
+                    </button>
+                </div>
+            `).join('');
+
+            subtotalEl.innerText = `${currencySymbol}${totalValue.toLocaleString('en-IN')}`;
+            totalEl.innerText = `${currencySymbol}${totalValue.toLocaleString('en-IN')}`;
+            checkoutBtn.disabled = false;
+        }
+
+        // ==========================================================
+        // E-commerce Logic
+        // ==========================================================
+
+        function addToCart(productId, buttonElement) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            updateCartCounter();
+            
+            // TASK 3/4: Click tracked by GTM trigger. This also pushes the E-commerce event:
+            pushDataLayerEvent('add_to_cart', {
+                'ecommerce': {
+                    'items': [{
+                        item_id: product.id,
+                        item_name: product.name,
+                        price: product.price,
+                        quantity: 1
+                    }]
+                }
+            });
+            
+            // Visual feedback
+            buttonElement.innerText = "Added to Cart!";
+            buttonElement.classList.remove('bg-green-600', 'hover:bg-green-700');
+            buttonElement.classList.add('bg-green-700', 'animate-pulse');
+            setTimeout(() => {
+                buttonElement.innerText = `Add To Cart (${currencySymbol}${product.price.toLocaleString('en-IN')})`;
+                buttonElement.classList.remove('bg-green-700', 'animate-pulse');
+                buttonElement.classList.add('bg-green-600', 'hover:bg-green-700');
+            }, 1500);
+        }
+        
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartCounter();
+            renderCart();
+        }
+
+        function checkout() {
+            if (cart.length === 0) return;
+
+            const transactionId = 'TXN-' + Math.floor(Math.random() * 1000000);
+            const totalValue = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+            // KEY FOR GOOGLE ADS/GA4 CONVERSION TRACKING (Future Tasks)
+            pushDataLayerEvent('purchase', {
+                'ecommerce': {
+                    'transaction_id': transactionId,
+                    'value': totalValue,
+                    'currency': 'INR', // Using INR since it's Flipkart style
+                    'items': cart.map(item => ({
+                        item_id: item.id,
+                        item_name: item.name,
+                        price: item.price,
+                        quantity: item.quantity
+                    }))
+                }
+            });
+
+            // Update confirmation view details
+            document.getElementById('display-txn-id').innerText = transactionId;
+            document.getElementById('display-total-value').innerText = `${currencySymbol}${totalValue.toLocaleString('en-IN')}`;
+
+            // Clear the cart after pushing the purchase event
+            cart = []; 
+            updateCartCounter();
+            
+            // Navigate to confirmation page
+            goToPage('confirmed');
+        }
+
+        // ==========================================================
+        // SPA Routing/GTM Tracking
+        // ==========================================================
+
+        function goToProductDetail(productId) {
+            renderProduct(productId);
+            goToPage('product', { productId: productId });
+        }
+
+        function goToPage(pageName, data = {}) {
+            // 1. Hide all views
+            document.querySelectorAll('.page-view').forEach(view => view.style.display = 'none');
+            
+            let viewId;
+            let path;
+            let title;
+
+            if (pageName === 'home') {
+                viewId = 'home-view';
+                path = '/';
+                title = 'Trendy Bags | Home';
+                renderHome();
+            } else if (pageName === 'cart') {
+                viewId = 'cart-view';
+                path = '/cart';
+                title = 'Trendy Bags | Cart';
+                renderCart();
+            } else if (pageName === 'product') {
+                viewId = 'product-view';
+                path = `/product/${data.productId}`;
+                title = `Trendy Bags | ${currentProduct.name}`;
+            } else if (pageName === 'confirmed') {
+                viewId = 'confirm-view';
+                path = '/checkout-confirmation';
+                title = 'Trendy Bags | Order Confirmed';
+            } else {
+                return;
+            }
+
+            // 2. Show the target view
+            document.getElementById(viewId).style.display = 'block';
+            document.getElementById('page-title').innerText = title;
+
+            // 3. Update the URL (simulates a real page change for GTM to track)
+            window.history.pushState(null, title, path);
+            
+            // 4. IMPORTANT FOR SPA TRACKING: PUSH A HISTORY CHANGE EVENT TO THE DATA LAYER
+            // Use this custom 'historyChange' event as the trigger for all GA4/Ads pageview tags.
+            pushDataLayerEvent('historyChange', {
+                'screen_name': title,
+                'newUrl': window.location.pathname
+            });
+        }
+        
+        // Initial setup on load
+        window.onload = function() {
+            renderHome();
+            updateCartCounter();
+        };
+    </script>
+
+</body>
+</html>
